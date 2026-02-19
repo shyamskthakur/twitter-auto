@@ -46,4 +46,4 @@ tweet = f"""📊 Market Update ({time_now})
 
 api.update_status(tweet)
 
-print("Market update posted successfully!")update posted successfully!")
+print("Market update posted successfully!")
