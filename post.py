@@ -3,7 +3,7 @@ import requests
 import tweepy
 from datetime import datetime
 
-# Twitter credentials from GitHub secrets
+# Twitter credentials
 api_key = os.environ["API_KEY"]
 api_secret = os.environ["API_SECRET"]
 access_token = os.environ["ACCESS_TOKEN"]
@@ -18,7 +18,7 @@ auth = tweepy.OAuth1UserHandler(
 
 api = tweepy.API(auth)
 
-# Get Bitcoin price
+# Get Bitcoin price (CoinGecko)
 btc_data = requests.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
 ).json()
@@ -26,17 +26,13 @@ btc_data = requests.get(
 btc_price = round(btc_data["bitcoin"]["usd"], 2)
 btc_change = round(btc_data["bitcoin"]["usd_24h_change"], 2)
 
-# Get Gold & Silver prices
-metals = requests.get("https://api.metals.live/v1/spot").json()
+# Get Gold & Silver prices (GoldAPI free public endpoint)
+metals_data = requests.get(
+    "https://api.metals.live/v1/spot/gold,silver"
+).json()
 
-gold_price = None
-silver_price = None
-
-for item in metals:
-    if "gold" in item:
-        gold_price = round(item["gold"], 2)
-    if "silver" in item:
-        silver_price = round(item["silver"], 2)
+gold_price = round(metals_data[0]["gold"], 2)
+silver_price = round(metals_data[1]["silver"], 2)
 
 time_now = datetime.utcnow().strftime("%H:%M UTC")
 
@@ -50,4 +46,4 @@ tweet = f"""📊 Market Update ({time_now})
 
 api.update_status(tweet)
 
-print("Market update posted successfully!")
+print("Market update posted successfully!")update posted successfully!")
