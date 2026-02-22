@@ -18,19 +18,27 @@ auth = tweepy.OAuth1UserHandler(
 
 api = tweepy.API(auth)
 
-# Get Bitcoin, Gold (PAXG), Silver (XAG) from CoinGecko
-data = requests.get(
+# Fetch data from CoinGecko
+response = requests.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,pax-gold,silver-token&vs_currencies=usd&include_24hr_change=true"
-).json()
+)
 
-btc_price = round(data["bitcoin"]["usd"], 2)
-btc_change = round(data["bitcoin"]["usd_24h_change"], 2)
+data = response.json()
 
-gold_price = round(data["pax-gold"]["usd"], 2)
-gold_change = round(data["pax-gold"]["usd_24h_change"], 2)
+# Safe extraction function
+def safe_round(value):
+    if value is None:
+        return "N/A"
+    return round(value, 2)
 
-silver_price = round(data["silver-token"]["usd"], 2)
-silver_change = round(data["silver-token"]["usd_24h_change"], 2)
+btc_price = safe_round(data.get("bitcoin", {}).get("usd"))
+btc_change = safe_round(data.get("bitcoin", {}).get("usd_24h_change"))
+
+gold_price = safe_round(data.get("pax-gold", {}).get("usd"))
+gold_change = safe_round(data.get("pax-gold", {}).get("usd_24h_change"))
+
+silver_price = safe_round(data.get("silver-token", {}).get("usd"))
+silver_change = safe_round(data.get("silver-token", {}).get("usd_24h_change"))
 
 time_now = datetime.utcnow().strftime("%H:%M UTC")
 
