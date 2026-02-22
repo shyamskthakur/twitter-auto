@@ -18,28 +18,26 @@ auth = tweepy.OAuth1UserHandler(
 
 api = tweepy.API(auth)
 
-# Get Bitcoin price (CoinGecko)
-btc_data = requests.get(
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
+# Get Bitcoin, Gold (PAXG), Silver (XAG) from CoinGecko
+data = requests.get(
+    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,pax-gold,silver-token&vs_currencies=usd&include_24hr_change=true"
 ).json()
 
-btc_price = round(btc_data["bitcoin"]["usd"], 2)
-btc_change = round(btc_data["bitcoin"]["usd_24h_change"], 2)
+btc_price = round(data["bitcoin"]["usd"], 2)
+btc_change = round(data["bitcoin"]["usd_24h_change"], 2)
 
-# Get Gold & Silver prices (GoldAPI free public endpoint)
-metals_data = requests.get(
-    "https://api.metals.live/v1/spot/gold,silver"
-).json()
+gold_price = round(data["pax-gold"]["usd"], 2)
+gold_change = round(data["pax-gold"]["usd_24h_change"], 2)
 
-gold_price = round(metals_data[0]["gold"], 2)
-silver_price = round(metals_data[1]["silver"], 2)
+silver_price = round(data["silver-token"]["usd"], 2)
+silver_change = round(data["silver-token"]["usd_24h_change"], 2)
 
 time_now = datetime.utcnow().strftime("%H:%M UTC")
 
 tweet = f"""📊 Market Update ({time_now})
 
-🟡 Gold: ${gold_price}
-⚪ Silver: ${silver_price}
+🟡 Gold: ${gold_price} ({gold_change}%)
+⚪ Silver: ${silver_price} ({silver_change}%)
 ₿ Bitcoin: ${btc_price} ({btc_change}%)
 
 #Gold #Silver #Bitcoin #Crypto #Forex"""
